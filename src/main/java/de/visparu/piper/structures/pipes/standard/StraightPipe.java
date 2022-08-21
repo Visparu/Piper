@@ -1,4 +1,4 @@
-package de.visparu.piper.structures.pipes;
+package de.visparu.piper.structures.pipes.standard;
 
 import java.util.HashSet;
 import java.util.Set;

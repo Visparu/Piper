@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
-import de.visparu.piper.structures.pipes.CrossPipe;
-import de.visparu.piper.structures.pipes.CurvedPipe;
-import de.visparu.piper.structures.pipes.DeadEndPipe;
-import de.visparu.piper.structures.pipes.SplitPipe;
-import de.visparu.piper.structures.pipes.StraightPipe;
+import de.visparu.piper.structures.pipes.standard.CrossPipe;
+import de.visparu.piper.structures.pipes.standard.CurvedPipe;
+import de.visparu.piper.structures.pipes.standard.DeadEndPipe;
+import de.visparu.piper.structures.pipes.standard.SplitPipe;
+import de.visparu.piper.structures.pipes.standard.StraightPipe;
 import de.visparu.piper.ui.GameWindow;
 
 public class Toolbox
