@@ -22,37 +22,31 @@ public class PipeRenderer {
             if (directions.contains(d)) {
                 int x, y, w, h;
                 switch (d) {
-                    case EAST: {
+                    case EAST -> {
                         x = Pipe.SIZE_LARGE;
                         y = Pipe.SIZE_MEDIUM;
                         w = Pipe.SIZE_MEDIUM;
                         h = Pipe.SIZE_SMALL;
-                        break;
                     }
-                    case NORTH: {
+                    case NORTH -> {
                         x = Pipe.SIZE_MEDIUM;
                         y = 0;
                         w = Pipe.SIZE_SMALL;
                         h = Pipe.SIZE_MEDIUM;
-                        break;
                     }
-                    case SOUTH: {
+                    case SOUTH -> {
                         x = Pipe.SIZE_MEDIUM;
                         y = Pipe.SIZE_LARGE;
                         w = Pipe.SIZE_SMALL;
                         h = Pipe.SIZE_MEDIUM;
-                        break;
                     }
-                    case WEST: {
+                    case WEST -> {
                         x = 0;
                         y = Pipe.SIZE_MEDIUM;
                         w = Pipe.SIZE_MEDIUM;
                         h = Pipe.SIZE_SMALL;
-                        break;
                     }
-                    default: {
-                        throw new IllegalStateException();
-                    }
+                    default -> throw new IllegalStateException();
                 }
 
                 g2d.setColor(Pipe.COLOR_PIPE);
@@ -78,7 +72,7 @@ public class PipeRenderer {
         for (Pipe.Direction d : this.pipe.getEntryPoints()) {
             int x, y, w, h;
             switch (d) {
-                case EAST: {
+                case EAST -> {
                     int xs = Pipe.SIZE_LARGE;
                     int ys = Pipe.SIZE_MEDIUM;
                     int ws = Pipe.SIZE_MEDIUM;
@@ -88,9 +82,8 @@ public class PipeRenderer {
                     h = hs;
                     x = xs + ws - w;
                     y = ys;
-                    break;
                 }
-                case NORTH: {
+                case NORTH -> {
                     int xs = Pipe.SIZE_MEDIUM;
                     int ys = 0;
                     int ws = Pipe.SIZE_SMALL;
@@ -100,9 +93,8 @@ public class PipeRenderer {
                     h = (int) (hs * segmentProgress);
                     x = xs;
                     y = ys;
-                    break;
                 }
-                case SOUTH: {
+                case SOUTH -> {
                     int xs = Pipe.SIZE_MEDIUM;
                     int ys = Pipe.SIZE_LARGE;
                     int ws = Pipe.SIZE_SMALL;
@@ -112,9 +104,8 @@ public class PipeRenderer {
                     h = (int) (hs * segmentProgress);
                     x = xs;
                     y = ys + hs - h;
-                    break;
                 }
-                case WEST: {
+                case WEST -> {
                     int xs = 0;
                     int ys = Pipe.SIZE_MEDIUM;
                     int ws = Pipe.SIZE_MEDIUM;
@@ -124,11 +115,8 @@ public class PipeRenderer {
                     h = hs;
                     x = xs;
                     y = ys;
-                    break;
                 }
-                default: {
-                    throw new IllegalStateException();
-                }
+                default -> throw new IllegalStateException();
             }
 
             g2d.setColor(Pipe.COLOR_FILL);
@@ -145,37 +133,31 @@ public class PipeRenderer {
         for (Pipe.Direction d : this.pipe.getEntryPoints()) {
             int x, y, w, h;
             switch (d) {
-                case EAST: {
+                case EAST -> {
                     w = (int) (ws * segmentProgress);
                     h = hs;
                     x = xs + ws - w;
                     y = ys;
-                    break;
                 }
-                case NORTH: {
+                case NORTH -> {
                     w = ws;
                     h = (int) (hs * segmentProgress);
                     x = xs;
                     y = ys;
-                    break;
                 }
-                case SOUTH: {
+                case SOUTH -> {
                     w = ws;
                     h = (int) (hs * segmentProgress);
                     x = xs;
                     y = ys + hs - h;
-                    break;
                 }
-                case WEST: {
+                case WEST -> {
                     w = (int) (ws * segmentProgress);
                     h = hs;
                     x = xs;
                     y = ys;
-                    break;
                 }
-                default: {
-                    throw new IllegalStateException();
-                }
+                default -> throw new IllegalStateException();
             }
 
             g2d.setColor(Pipe.COLOR_FILL);
@@ -191,7 +173,7 @@ public class PipeRenderer {
                 continue;
             }
             switch (d) {
-                case EAST: {
+                case EAST -> {
                     int xs = Pipe.SIZE_LARGE;
                     int ys = Pipe.SIZE_MEDIUM;
                     int ws = Pipe.SIZE_MEDIUM;
@@ -201,9 +183,8 @@ public class PipeRenderer {
                     h = hs;
                     x = xs;
                     y = ys;
-                    break;
                 }
-                case NORTH: {
+                case NORTH -> {
                     int xs = Pipe.SIZE_MEDIUM;
                     int ys = 0;
                     int ws = Pipe.SIZE_SMALL;
@@ -213,9 +194,8 @@ public class PipeRenderer {
                     h = (int) (hs * segmentProgress);
                     x = xs;
                     y = ys + hs - h;
-                    break;
                 }
-                case SOUTH: {
+                case SOUTH -> {
                     int xs = Pipe.SIZE_MEDIUM;
                     int ys = Pipe.SIZE_LARGE;
                     int ws = Pipe.SIZE_SMALL;
@@ -225,9 +205,8 @@ public class PipeRenderer {
                     h = (int) (hs * segmentProgress);
                     x = xs;
                     y = ys;
-                    break;
                 }
-                case WEST: {
+                case WEST -> {
                     int xs = 0;
                     int ys = Pipe.SIZE_MEDIUM;
                     int ws = Pipe.SIZE_MEDIUM;
@@ -237,11 +216,8 @@ public class PipeRenderer {
                     h = hs;
                     x = xs + ws - w;
                     y = ys;
-                    break;
                 }
-                default: {
-                    throw new IllegalStateException();
-                }
+                default -> throw new IllegalStateException();
             }
 
             g2d.setColor(Pipe.COLOR_FILL);
@@ -255,37 +231,31 @@ public class PipeRenderer {
             if (directions.contains(d)) {
                 int x, y, w, h;
                 switch (d) {
-                    case EAST: {
+                    case EAST -> {
                         x = Pipe.SIZE_LARGE;
                         y = Pipe.SIZE_MEDIUM;
                         w = Pipe.SIZE_MEDIUM;
                         h = Pipe.SIZE_SMALL;
-                        break;
                     }
-                    case NORTH: {
+                    case NORTH -> {
                         x = Pipe.SIZE_MEDIUM;
                         y = 0;
                         w = Pipe.SIZE_SMALL;
                         h = Pipe.SIZE_MEDIUM;
-                        break;
                     }
-                    case SOUTH: {
+                    case SOUTH -> {
                         x = Pipe.SIZE_MEDIUM;
                         y = Pipe.SIZE_LARGE;
                         w = Pipe.SIZE_SMALL;
                         h = Pipe.SIZE_MEDIUM;
-                        break;
                     }
-                    case WEST: {
+                    case WEST -> {
                         x = 0;
                         y = Pipe.SIZE_MEDIUM;
                         w = Pipe.SIZE_MEDIUM;
                         h = Pipe.SIZE_SMALL;
-                        break;
                     }
-                    default: {
-                        throw new IllegalStateException();
-                    }
+                    default -> throw new IllegalStateException();
                 }
 
                 g2d.setColor(Pipe.COLOR_PIPE_EDGE);

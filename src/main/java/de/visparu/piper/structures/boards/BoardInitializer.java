@@ -1,6 +1,7 @@
 package de.visparu.piper.structures.boards;
 
 import de.visparu.piper.settings.Settings;
+import de.visparu.piper.structures.fields.Field;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.standard.CrossPipe;
 import de.visparu.piper.structures.pipes.standard.CurvedPipe;
@@ -19,9 +20,9 @@ public class BoardInitializer {
     private final Random            rand;
     private final int               entries;
     private final int               exits;
-    private final int[]             fixedPieces;
-    private final Field[][]         fields;
-    private final List<Field>       entryFields;
+    private final int[]       fixedPieces;
+    private final Field[][]   fields;
+    private final List<Field> entryFields;
     private final List<Field>       exitFields;
     private final List<Field>       fixedFields;
     private final Map<Field, Point> coordinates;

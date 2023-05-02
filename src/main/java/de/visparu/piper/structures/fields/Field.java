@@ -1,9 +1,10 @@
-package de.visparu.piper.structures.boards;
+package de.visparu.piper.structures.fields;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
+import de.visparu.piper.structures.boards.Board;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.Pipe.Direction;
 

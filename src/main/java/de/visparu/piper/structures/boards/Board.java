@@ -14,6 +14,7 @@ import java.util.Set;
 
 import de.visparu.piper.context.GameContext;
 import de.visparu.piper.settings.Settings;
+import de.visparu.piper.structures.fields.Field;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.Pipe.Direction;
 

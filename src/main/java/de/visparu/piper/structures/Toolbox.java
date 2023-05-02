@@ -12,8 +12,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import de.visparu.piper.context.GameContext;
-import de.visparu.piper.structures.boards.Board;
-import de.visparu.piper.structures.boards.Field;
+import de.visparu.piper.structures.fields.Field;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.standard.CrossPipe;
 import de.visparu.piper.structures.pipes.standard.CurvedPipe;

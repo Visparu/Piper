@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.visparu.piper.context.GameContext;
-import de.visparu.piper.structures.boards.Field;
+import de.visparu.piper.structures.fields.Field;
 
 public class Input {
     private final GameContext context;

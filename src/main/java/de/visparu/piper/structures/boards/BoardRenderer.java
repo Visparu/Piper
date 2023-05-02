@@ -1,5 +1,7 @@
 package de.visparu.piper.structures.boards;
 
+import de.visparu.piper.structures.fields.Field;
+
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
