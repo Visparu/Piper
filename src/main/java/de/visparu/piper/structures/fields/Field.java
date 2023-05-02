@@ -68,13 +68,12 @@ public class Field {
                                                          .isEmpty()) {
             return;
         }
-        switch (this.pipe.getDirection()) {
-            case EAST -> this.pipe.setDirection(Direction.SOUTH);
-            case NORTH -> this.pipe.setDirection(Direction.EAST);
-            case SOUTH -> this.pipe.setDirection(Direction.WEST);
-            case WEST -> this.pipe.setDirection(Direction.NORTH);
-            default -> throw new IllegalStateException();
-        }
+        this.pipe.setDirection(switch (this.pipe.getDirection()) {
+            case EAST -> Direction.SOUTH;
+            case NORTH -> Direction.EAST;
+            case SOUTH -> Direction.WEST;
+            case WEST -> Direction.NORTH;
+        });
     }
 
     public Pipe getPipe() {

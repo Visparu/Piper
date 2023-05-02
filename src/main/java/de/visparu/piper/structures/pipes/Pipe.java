@@ -29,11 +29,6 @@ public abstract class Pipe {
         WEST
     }
 
-    public enum Rotation {
-        CLOCKWISE,
-        COUNTER_CLOCKWISE
-    }
-
     private       Direction      direction;
     private final Set<Direction> entryPoints = new HashSet<>();
     private       float          progress;
@@ -75,30 +70,12 @@ public abstract class Pipe {
             entryPoints = sb2.substring(2);
         }
 
-        return String.format("%s: {Direction: %s, Progress: %s, Openings: {%s}, Entrypoints: {%s}", this.getClass()
+        return String.format("%s: {Direction: %s, Progress: %s, Openings: {%s}, Entry points: {%s}", this.getClass()
                                                                                                         .getSimpleName(), this.direction, this.progress, openings, entryPoints);
     }
 
     public void render(Graphics2D g2d) {
         this.pipeRenderer.render(g2d);
-    }
-
-    public Direction rotate(Rotation rotation) {
-        this.direction = switch (rotation) {
-            case CLOCKWISE -> switch (this.direction) {
-                case EAST -> Direction.SOUTH;
-                case NORTH -> Direction.EAST;
-                case SOUTH -> Direction.WEST;
-                case WEST -> Direction.NORTH;
-            };
-            case COUNTER_CLOCKWISE -> switch (this.direction) {
-                case EAST -> Direction.NORTH;
-                case NORTH -> Direction.WEST;
-                case SOUTH -> Direction.EAST;
-                case WEST -> Direction.SOUTH;
-            };
-        };
-        return this.direction;
     }
 
     public float increaseProgress(float progress) {
