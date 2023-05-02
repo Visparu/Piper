@@ -23,27 +23,13 @@ public class StraightPipe extends Pipe {
     @Override
     public Set<Direction> getOpeningDirections() {
         Direction d1 = super.getDirection();
-        Direction d2;
-        switch (d1) {
-            case EAST:
-                d2 = Direction.WEST;
-                break;
-            case NORTH:
-                d2 = Direction.SOUTH;
-                break;
-            case SOUTH:
-                d2 = Direction.NORTH;
-                break;
-            case WEST:
-                d2 = Direction.EAST;
-                break;
-            default:
-                throw new IllegalStateException();
-        }
+        Direction d2 = switch (d1) {
+            case EAST -> Direction.WEST;
+            case NORTH -> Direction.SOUTH;
+            case SOUTH -> Direction.NORTH;
+            case WEST -> Direction.EAST;
+        };
 
-        Set<Direction> result = new HashSet<>();
-        result.add(d1);
-        result.add(d2);
-        return result;
+        return Set.of(d1, d2);
     }
 }

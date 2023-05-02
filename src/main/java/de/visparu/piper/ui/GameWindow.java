@@ -9,187 +9,202 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import de.visparu.piper.root.Piper;
+import de.visparu.piper.context.GameContext;
 import de.visparu.piper.settings.Difficulty;
 import de.visparu.piper.settings.Settings;
 
 public final class GameWindow {
-    public static final int CANVAS_BUFFERS = 3;
+    private static final int CANVAS_BUFFERS = 3;
 
-    private static boolean init = false;
+    private final GameContext context;
 
-    private static final JFrame    frame                  = new JFrame();
-    private static final JMenuBar  menubar                = new JMenuBar();
-    private static final JMenu     menu_game              = new JMenu();
-    private static final JMenuItem menu_game_newgame      = new JMenuItem();
-    private static final JMenuItem menu_game_settings     = new JMenuItem();
-    private static final JMenuItem menu_game_exit         = new JMenuItem();
-    private static final JMenu     menu_difficulty        = new JMenu();
-    private static final JMenuItem menu_difficulty_easy   = new JMenuItem();
-    private static final JMenuItem menu_difficulty_medium = new JMenuItem();
-    private static final JMenuItem menu_difficulty_hard   = new JMenuItem();
-    private static final JMenuItem menu_difficulty_wtf    = new JMenuItem();
-    private static final Canvas    canvas_toolbox         = new Canvas();
-    private static final Canvas    canvas_board           = new Canvas();
+    private final JFrame    frame;
+    private final JMenuBar  menubar;
+    private final JMenu     menu_game;
+    private final JMenuItem menu_game_newgame;
+    private final JMenuItem menu_game_settings;
+    private final JMenuItem menu_game_exit;
+    private final JMenu     menu_difficulty;
+    private final JMenuItem menu_difficulty_easy;
+    private final JMenuItem menu_difficulty_medium;
+    private final JMenuItem menu_difficulty_hard;
+    private final JMenuItem menu_difficulty_wtf;
+    private final Canvas    canvas_toolbox;
+    private final Canvas    canvas_board;
 
-    private GameWindow() {
+    public GameWindow(GameContext context) {
+        this.context = context;
+
+        this.frame                  = new JFrame();
+        this.menubar                = new JMenuBar();
+        this.menu_game              = new JMenu();
+        this.menu_game_newgame      = new JMenuItem();
+        this.menu_game_settings     = new JMenuItem();
+        this.menu_game_exit         = new JMenuItem();
+        this.menu_difficulty        = new JMenu();
+        this.menu_difficulty_easy   = new JMenuItem();
+        this.menu_difficulty_medium = new JMenuItem();
+        this.menu_difficulty_hard   = new JMenuItem();
+        this.menu_difficulty_wtf    = new JMenuItem();
+        this.canvas_toolbox         = new Canvas();
+        this.canvas_board           = new Canvas();
     }
 
-    public static void init() {
-        if (GameWindow.init) {
-            throw new IllegalStateException();
-        }
-        GameWindow.init = true;
-
-        GameWindow.init_configure();
-        GameWindow.init_connect();
-        GameWindow.init_listen();
-        GameWindow.init_present();
+    public void init() {
+        this.init_configure();
+        this.init_connect();
+        this.init_listen();
+        this.init_present();
     }
 
-    private static void init_configure() {
-        GameWindow.frame.setTitle("Piper");
-        GameWindow.frame.setResizable(false);
-        GameWindow.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private void init_configure() {
+        this.frame.setTitle("Piper");
+        this.frame.setResizable(false);
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        GameWindow.menu_game.setText("Game");
-        GameWindow.menu_game.setMnemonic('g');
+        this.menu_game.setText("Game");
+        this.menu_game.setMnemonic('g');
 
-        GameWindow.menu_game_newgame.setText("New Game");
-        GameWindow.menu_game_newgame.setMnemonic('n');
+        this.menu_game_newgame.setText("New Game");
+        this.menu_game_newgame.setMnemonic('n');
 
-        GameWindow.menu_game_settings.setText("Settings");
-        GameWindow.menu_game_settings.setMnemonic('s');
-        GameWindow.menu_game_settings.setEnabled(false);
+        this.menu_game_settings.setText("Settings");
+        this.menu_game_settings.setMnemonic('s');
+        this.menu_game_settings.setEnabled(false);
 
-        GameWindow.menu_game_exit.setText("Exit");
-        GameWindow.menu_game_exit.setMnemonic('e');
+        this.menu_game_exit.setText("Exit");
+        this.menu_game_exit.setMnemonic('e');
 
-        GameWindow.menu_difficulty.setText("Difficulty");
-        GameWindow.menu_difficulty.setMnemonic('d');
+        this.menu_difficulty.setText("Difficulty");
+        this.menu_difficulty.setMnemonic('d');
 
-        GameWindow.menu_difficulty_easy.setText("Easy");
-        GameWindow.menu_difficulty_easy.setMnemonic('e');
+        this.menu_difficulty_easy.setText("Easy");
+        this.menu_difficulty_easy.setMnemonic('e');
 
-        GameWindow.menu_difficulty_medium.setText("Medium");
-        GameWindow.menu_difficulty_medium.setMnemonic('m');
+        this.menu_difficulty_medium.setText("Medium");
+        this.menu_difficulty_medium.setMnemonic('m');
 
-        GameWindow.menu_difficulty_hard.setText("Hard");
-        GameWindow.menu_difficulty_hard.setMnemonic('h');
+        this.menu_difficulty_hard.setText("Hard");
+        this.menu_difficulty_hard.setMnemonic('h');
 
-        GameWindow.menu_difficulty_wtf.setText("...wtf?");
-        GameWindow.menu_difficulty_wtf.setMnemonic('w');
+        this.menu_difficulty_wtf.setText("...wtf?");
+        this.menu_difficulty_wtf.setMnemonic('w');
     }
 
-    private static void init_connect() {
-        GameWindow.frame.setLayout(new BorderLayout());
-        GameWindow.frame.add(GameWindow.menubar, BorderLayout.NORTH);
-        GameWindow.frame.add(GameWindow.canvas_toolbox, BorderLayout.WEST);
-        GameWindow.frame.add(GameWindow.canvas_board, BorderLayout.EAST);
+    private void init_connect() {
+        this.frame.setLayout(new BorderLayout());
+        this.frame.add(this.menubar, BorderLayout.NORTH);
+        this.frame.add(this.canvas_toolbox, BorderLayout.WEST);
+        this.frame.add(this.canvas_board, BorderLayout.EAST);
 
-        GameWindow.menubar.add(GameWindow.menu_game);
-        GameWindow.menubar.add(GameWindow.menu_difficulty);
+        this.menubar.add(this.menu_game);
+        this.menubar.add(this.menu_difficulty);
 
-        GameWindow.menu_game.add(GameWindow.menu_game_newgame);
-        GameWindow.menu_game.add(GameWindow.menu_game_settings);
-        GameWindow.menu_game.add(GameWindow.menu_game_exit);
+        this.menu_game.add(this.menu_game_newgame);
+        this.menu_game.add(this.menu_game_settings);
+        this.menu_game.add(this.menu_game_exit);
 
-        GameWindow.menu_difficulty.add(GameWindow.menu_difficulty_easy);
-        GameWindow.menu_difficulty.add(GameWindow.menu_difficulty_medium);
-        GameWindow.menu_difficulty.add(GameWindow.menu_difficulty_hard);
-        GameWindow.menu_difficulty.add(GameWindow.menu_difficulty_wtf);
+        this.menu_difficulty.add(this.menu_difficulty_easy);
+        this.menu_difficulty.add(this.menu_difficulty_medium);
+        this.menu_difficulty.add(this.menu_difficulty_hard);
+        this.menu_difficulty.add(this.menu_difficulty_wtf);
     }
 
-    private static void init_listen() {
-        GameWindow.canvas_board.addMouseListener(Input.getMouseAdapter());
-        GameWindow.canvas_board.addKeyListener(Input.getKeyAdapter());
+    private void init_listen() {
+        this.canvas_board.addMouseListener(this.context.getInput().getMouseAdapter());
+        this.canvas_board.addKeyListener(this.context.getInput().getKeyAdapter());
 
-        GameWindow.menu_game_newgame.addActionListener(e -> {
-            Piper.newGame();
+        this.menu_game_newgame.addActionListener(e -> this.context.getPiper()
+                                                              .newGame());
+        this.menu_game_settings.addActionListener(e -> {
+
         });
-        GameWindow.menu_game_settings.addActionListener(e -> {
+        this.menu_game_exit.addActionListener(e -> System.exit(0));
 
-        });
-        GameWindow.menu_game_exit.addActionListener(e -> {
-            System.exit(0);
-        });
-
-        GameWindow.menu_difficulty_easy.addActionListener(e -> {
+        this.menu_difficulty_easy.addActionListener(e -> {
             Settings.setDifficulty(Difficulty.EASY);
-            Piper.newGame();
+            this.context.getPiper()
+                        .newGame();
         });
-        GameWindow.menu_difficulty_medium.addActionListener(e -> {
+        this.menu_difficulty_medium.addActionListener(e -> {
             Settings.setDifficulty(Difficulty.MEDIUM);
-            Piper.newGame();
+            this.context.getPiper()
+                        .newGame();
         });
-        GameWindow.menu_difficulty_hard.addActionListener(e -> {
+        this.menu_difficulty_hard.addActionListener(e -> {
             Settings.setDifficulty(Difficulty.HARD);
-            Piper.newGame();
+            this.context.getPiper()
+                        .newGame();
         });
-        GameWindow.menu_difficulty_wtf.addActionListener(e -> {
+        this.menu_difficulty_wtf.addActionListener(e -> {
             Settings.setDifficulty(Difficulty.WTF);
-            Piper.newGame();
+            this.context.getPiper()
+                        .newGame();
         });
     }
 
-    private static void init_present() {
-        GameWindow.frame.pack();
-        GameWindow.frame.setLocationRelativeTo(null);
-        GameWindow.frame.setVisible(true);
+    private void init_present() {
+        this.frame.pack();
+        this.frame.setLocationRelativeTo(null);
+        this.frame.setVisible(true);
     }
 
-    public static BufferStrategy getToolboxCanvasBufferStrategy() {
-        BufferStrategy bs = GameWindow.canvas_toolbox.getBufferStrategy();
+    public BufferStrategy getToolboxCanvasBufferStrategy() {
+        BufferStrategy bs = this.canvas_toolbox.getBufferStrategy();
         if (bs == null) {
-            GameWindow.canvas_toolbox.createBufferStrategy(GameWindow.CANVAS_BUFFERS);
-            bs = GameWindow.canvas_toolbox.getBufferStrategy();
+            this.canvas_toolbox.createBufferStrategy(GameWindow.CANVAS_BUFFERS);
+            bs = this.canvas_toolbox.getBufferStrategy();
         }
         return bs;
     }
 
-    public static BufferStrategy getBoardCanvasBufferStrategy() {
-        BufferStrategy bs = GameWindow.canvas_board.getBufferStrategy();
+    public BufferStrategy getBoardCanvasBufferStrategy() {
+        BufferStrategy bs = this.canvas_board.getBufferStrategy();
         if (bs == null) {
-            GameWindow.canvas_board.createBufferStrategy(GameWindow.CANVAS_BUFFERS);
-            bs = GameWindow.canvas_board.getBufferStrategy();
+            this.canvas_board.createBufferStrategy(GameWindow.CANVAS_BUFFERS);
+            bs = this.canvas_board.getBufferStrategy();
         }
         return bs;
     }
 
-    public static int getToolboxCanvasWidth() {
-        return GameWindow.canvas_toolbox.getWidth();
+    public int getToolboxCanvasWidth() {
+        return this.canvas_toolbox.getWidth();
     }
 
-    public static int getToolboxCanvasHeight() {
-        return GameWindow.canvas_toolbox.getHeight();
+    public int getToolboxCanvasHeight() {
+        return this.canvas_toolbox.getHeight();
     }
 
-    public static int getBoardCanvasWidth() {
-        return GameWindow.canvas_board.getWidth();
+    public int getBoardCanvasWidth() {
+        return this.canvas_board.getWidth();
     }
 
-    public static int getBoardCanvasHeight() {
-        return GameWindow.canvas_board.getHeight();
+    public int getBoardCanvasHeight() {
+        return this.canvas_board.getHeight();
     }
 
-    private static void setToolboxCanvasSize(int width,
-                                             int height) {
-        GameWindow.canvas_toolbox.setSize(width, height);
+    private void setToolboxCanvasSize(int width,
+                                      int height) {
+        this.canvas_toolbox.setSize(width, height);
     }
 
-    private static void setBoardCanvasSize(int width,
-                                           int height) {
-        GameWindow.canvas_board.setSize(width, height);
+    private void setBoardCanvasSize(int width,
+                                    int height) {
+        this.canvas_board.setSize(width, height);
     }
 
-    public static void resize() {
-        GameWindow.setToolboxCanvasSize(Piper.getToolbox()
-                                             .getCanvasWidth(), Piper.getBoard()
-                                                                     .getCanvasHeight());
-        GameWindow.setBoardCanvasSize(Piper.getBoard()
-                                           .getCanvasWidth(), Piper.getBoard()
-                                                                   .getCanvasHeight());
-        GameWindow.frame.pack();
-        GameWindow.frame.setLocationRelativeTo(null);
+    public void resize() {
+        this.setToolboxCanvasSize(this.context.getPiper()
+                                              .getToolbox()
+                                              .getCanvasWidth(), this.context.getPiper()
+                                                                             .getBoard()
+                                                                             .getCanvasHeight());
+        this.setBoardCanvasSize(this.context.getPiper()
+                                            .getBoard()
+                                            .getCanvasWidth(), this.context.getPiper()
+                                                                           .getBoard()
+                                                                           .getCanvasHeight());
+        this.frame.pack();
+        this.frame.setLocationRelativeTo(null);
     }
 }

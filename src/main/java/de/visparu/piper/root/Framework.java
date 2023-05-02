@@ -4,41 +4,34 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
 
-import de.visparu.piper.ui.GameWindow;
+import de.visparu.piper.context.GameContext;
 
 public final class Framework {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
-    public static final double TPS = 120.0;
-    public static final double FPS = 120.0;
-    public static final double IDL = 1.5;
+    private final GameContext context;
 
-    private static boolean init = false;
-    private static boolean running;
+    public final double IDL = 1.5;
 
-    private Framework() {
+    private boolean running;
+
+    public Framework(GameContext context) {
+        this.context = context;
     }
 
-    public static void init() {
-        if (Framework.init) {
-            throw new IllegalStateException();
-        }
-        Framework.init    = true;
-        Framework.running = false;
+    public void init() {
+        this.running = false;
     }
 
-    public static void start() {
-        if (!Framework.init) {
+    public void start() {
+        if (this.running) {
             throw new IllegalStateException();
         }
-        if (Framework.running) {
-            throw new IllegalStateException();
-        }
-        Framework.running = true;
-        Framework.run();
+        this.running = true;
+        this.run();
     }
 
-    private static void run() {
+    private void run() {
         if (Framework.DEBUG) {
             System.out.println("DEBUG MODE ENABLED");
         }
@@ -46,75 +39,69 @@ public final class Framework {
         long startTime = System.nanoTime();
 
         long lastTick  = startTime;
-        long lastFrame = startTime;
         long lastInfo  = startTime;
 
-        double deltaTick  = 1000000000 / Framework.TPS;
-        double deltaFrame = 1000000000 / Framework.FPS;
-        double deltaInfo  = 1000000000 * Framework.IDL;
+        double deltaInfo  = 1000000000 * this.IDL;
 
         int ticks  = 0;
         int frames = 0;
 
-        while (Framework.running) {
+        while (this.running) {
             long now = System.nanoTime();
 
-            if (now > lastTick + deltaTick) {
-                lastTick = now;
-                Framework.tick();
-                ticks++;
-            }
+            this.tick((float) ((now - lastTick) / 1_000_000_000.0));
+            lastTick = now;
+            ticks++;
 
-            if (now > lastFrame + deltaFrame) {
-                lastFrame = now;
-                Framework.render();
-                frames++;
-            }
+            this.render();
+            frames++;
 
             if (now > lastInfo + deltaInfo) {
+                this.info((int) (ticks / this.IDL), (int) (frames / this.IDL));
                 lastInfo = now;
-                Framework.info((int) (ticks / Framework.IDL), (int) (frames / Framework.IDL));
                 ticks  = 0;
                 frames = 0;
             }
         }
     }
 
-    public static void stop() {
-        if (!Framework.running) {
-            throw new IllegalStateException();
-        }
-        Framework.running = false;
+    private void tick(float delta) {
+        this.context.getPiper()
+                    .getBoard()
+                    .tick(delta);
     }
 
-    private static void tick() {
-        Piper.getBoard()
-             .tick();
-    }
-
-    private static void render() {
-        BufferStrategy bs_toolbox  = GameWindow.getToolboxCanvasBufferStrategy();
-        Graphics2D     g2d_toolbox = (Graphics2D) bs_toolbox.getDrawGraphics();
+    private void render() {
+        BufferStrategy bs_toolbox = this.context.getGameWindow()
+                                                .getToolboxCanvasBufferStrategy();
+        Graphics2D g2d_toolbox = (Graphics2D) bs_toolbox.getDrawGraphics();
 
         g2d_toolbox.setColor(Color.BLACK);
-        g2d_toolbox.fillRect(0, 0, GameWindow.getToolboxCanvasWidth(), GameWindow.getToolboxCanvasHeight());
-        Piper.getToolbox()
-             .render(g2d_toolbox);
+        g2d_toolbox.fillRect(0, 0, this.context.getGameWindow()
+                                               .getToolboxCanvasWidth(), this.context.getGameWindow()
+                                                                                     .getToolboxCanvasHeight());
+        this.context.getPiper()
+                    .getToolbox()
+                    .render(g2d_toolbox);
 
-        BufferStrategy bs_board  = GameWindow.getBoardCanvasBufferStrategy();
-        Graphics2D     g2d_board = (Graphics2D) bs_board.getDrawGraphics();
+        BufferStrategy bs_board = this.context.getGameWindow()
+                                              .getBoardCanvasBufferStrategy();
+        Graphics2D g2d_board = (Graphics2D) bs_board.getDrawGraphics();
 
         g2d_board.setColor(Color.BLACK);
-        g2d_board.fillRect(0, 0, GameWindow.getBoardCanvasWidth(), GameWindow.getBoardCanvasHeight());
-        Piper.getBoard()
-             .render(g2d_board);
+        g2d_board.fillRect(0, 0, this.context.getGameWindow()
+                                             .getBoardCanvasWidth(), this.context.getGameWindow()
+                                                                                 .getBoardCanvasHeight());
+        this.context.getPiper()
+                    .getBoard()
+                    .render(g2d_board);
 
         bs_toolbox.show();
         bs_board.show();
     }
 
-    private static void info(int ticks,
-                             int frames) {
+    private void info(int ticks,
+                      int frames) {
         if (Framework.DEBUG) {
             System.out.printf("%d Ticks, %d Frames\n", ticks, frames);
         }

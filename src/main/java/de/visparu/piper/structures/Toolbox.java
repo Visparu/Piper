@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
+import de.visparu.piper.context.GameContext;
+import de.visparu.piper.structures.boards.Board;
 import de.visparu.piper.structures.boards.Field;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.standard.CrossPipe;
@@ -18,16 +20,16 @@ import de.visparu.piper.structures.pipes.standard.CurvedPipe;
 import de.visparu.piper.structures.pipes.standard.DeadEndPipe;
 import de.visparu.piper.structures.pipes.standard.SplitPipe;
 import de.visparu.piper.structures.pipes.standard.StraightPipe;
-import de.visparu.piper.ui.GameWindow;
 
 public class Toolbox {
     public static final Color COLOR_SELECTED_TILE = Color.GREEN;
 
     public static final int BORDER_SIZE     = 2;
     public static final int PANEL_SPACING_H = 10;
-    public static final int PANEL_WIDTH     = Field.SIZE + Toolbox.PANEL_SPACING_H * 2;
 
     public static final int PIPE_PREVIEW_AMOUNT = 5;
+
+    private final GameContext context;
 
     private final Random rand;
 
@@ -36,8 +38,10 @@ public class Toolbox {
 
     private final Map<Class<? extends Pipe>, Integer> percentiles = new HashMap<>();
 
-    public Toolbox(Random rand) {
-        this.rand = rand;
+    public Toolbox(GameContext context,
+                   Random rand) {
+        this.context = context;
+        this.rand    = rand;
         for (int i = 0; i < Toolbox.PIPE_PREVIEW_AMOUNT; i++) {
             this.fields.add(new Field());
         }
@@ -46,10 +50,10 @@ public class Toolbox {
     }
 
     private void populatePercentiles() {
-        this.percentiles.put(StraightPipe.class, 10);
+        this.percentiles.put(StraightPipe.class, 15);
         this.percentiles.put(CurvedPipe.class, 30);
-        this.percentiles.put(SplitPipe.class, 70);
-        this.percentiles.put(CrossPipe.class, 85);
+        this.percentiles.put(SplitPipe.class, 60);
+        this.percentiles.put(CrossPipe.class, 80);
         this.percentiles.put(DeadEndPipe.class, 100);
     }
 
@@ -66,7 +70,8 @@ public class Toolbox {
     }
 
     public void render(Graphics2D g2d) {
-        float completeSpacingV = GameWindow.getToolboxCanvasHeight() - this.fields.size() * Field.SIZE;
+        float completeSpacingV = this.context.getGameWindow()
+                                             .getToolboxCanvasHeight() - this.fields.size() * Field.SIZE;
         float singularSpacingV = completeSpacingV / (this.fields.size() + 1);
         for (int i = 0; i < this.fields.size(); i++) {
             int x = Toolbox.PANEL_SPACING_H;
@@ -87,14 +92,14 @@ public class Toolbox {
     }
 
     public Pipe createNewPipe() {
-        int perc = this.rand.nextInt(100);
-        if (perc < this.percentiles.get(StraightPipe.class)) {
+        int percentage = this.rand.nextInt(100);
+        if (percentage < this.percentiles.get(StraightPipe.class)) {
             return new StraightPipe();
-        } else if (perc < this.percentiles.get(CurvedPipe.class)) {
+        } else if (percentage < this.percentiles.get(CurvedPipe.class)) {
             return new CurvedPipe();
-        } else if (perc < this.percentiles.get(SplitPipe.class)) {
+        } else if (percentage < this.percentiles.get(SplitPipe.class)) {
             return new SplitPipe();
-        } else if (perc < this.percentiles.get(CrossPipe.class)) {
+        } else if (percentage < this.percentiles.get(CrossPipe.class)) {
             return new CrossPipe();
         } else {
             return new DeadEndPipe();

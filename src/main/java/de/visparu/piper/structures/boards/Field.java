@@ -4,39 +4,44 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import de.visparu.piper.root.Piper;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.Pipe.Direction;
 
 public class Field {
     public static final Color COLOR_BACKGROUND = Color.LIGHT_GRAY;
     public static final Color COLOR_ENTRY_EXIT = Color.YELLOW;
-    public static final Color COLOR_FIXED      = Color.BLACK;
     public static final Color COLOR_EDGE       = Color.BLACK;
     public static final Color COLOR_WON        = new Color(200, 255, 200);
     public static final Color COLOR_LOSS       = Color.RED;
 
     public static final int SIZE = 50;
 
-    private Pipe pipe;
+    private final Board parentBoard;
+    private       Pipe  pipe;
 
     private boolean entry     = false;
     private boolean exit      = false;
     private boolean fixed     = false;
     private boolean lossField = false;
 
+    public Field() {
+        this(null);
+    }
+
+    public Field(Board parentBoard) {
+        this.parentBoard = parentBoard;
+    }
+
     @Override
     public String toString() {
-        Point p = Piper.getBoard()
-                       .getFieldPosition(this);
+        Point p = this.parentBoard != null ? this.parentBoard.getFieldPosition(this) : null;
         int x = (p == null) ? -1 : p.x;
         int y = (p == null) ? -1 : p.y;
-        return String.format("Field: {x: %d, y: %d, Lossfield: %b, %s}", x, y, this.lossField, this.pipe);
+        return String.format("Field: {x: %d, y: %d, Loss field: %b, %s}", x, y, this.lossField, this.pipe);
     }
 
     public void render(Graphics2D g2d) {
-        if (Piper.getBoard()
-                 .hasWon()) {
+        if (this.parentBoard != null && this.parentBoard.hasWon()) {
             g2d.setColor(Field.COLOR_WON);
         } else if (this.lossField) {
             g2d.setColor(Field.COLOR_LOSS);
@@ -63,25 +68,11 @@ public class Field {
             return;
         }
         switch (this.pipe.getDirection()) {
-            case EAST: {
-                this.pipe.setDirection(Direction.SOUTH);
-                break;
-            }
-            case NORTH: {
-                this.pipe.setDirection(Direction.EAST);
-                break;
-            }
-            case SOUTH: {
-                this.pipe.setDirection(Direction.WEST);
-                break;
-            }
-            case WEST: {
-                this.pipe.setDirection(Direction.NORTH);
-                break;
-            }
-            default: {
-                throw new IllegalStateException();
-            }
+            case EAST -> this.pipe.setDirection(Direction.SOUTH);
+            case NORTH -> this.pipe.setDirection(Direction.EAST);
+            case SOUTH -> this.pipe.setDirection(Direction.WEST);
+            case WEST -> this.pipe.setDirection(Direction.NORTH);
+            default -> throw new IllegalStateException();
         }
     }
 
@@ -93,32 +84,16 @@ public class Field {
         this.pipe = pipe;
     }
 
-    public boolean isEntry() {
-        return this.entry;
-    }
-
     public void setEntry(boolean entry) {
         this.entry = entry;
-    }
-
-    public boolean isExit() {
-        return this.exit;
     }
 
     public void setExit(boolean exit) {
         this.exit = exit;
     }
 
-    public boolean isFixed() {
-        return this.fixed;
-    }
-
     public void setFixed(boolean fixed) {
         this.fixed = fixed;
-    }
-
-    public boolean isLossField() {
-        return this.lossField;
     }
 
     public void setLossField(boolean lossField) {

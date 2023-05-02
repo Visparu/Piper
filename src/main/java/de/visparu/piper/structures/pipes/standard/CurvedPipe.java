@@ -8,53 +8,18 @@ import de.visparu.piper.structures.pipes.Pipe;
 public class CurvedPipe extends Pipe {
     @Override
     public Set<Direction> getOpeningDirections() {
-        Direction d1, d2;
-        switch (super.getDirection()) {
-            case EAST: {
-                d1 = Pipe.Direction.WEST;
-                break;
-            }
-            case NORTH: {
-                d1 = Pipe.Direction.SOUTH;
-                break;
-            }
-            case SOUTH: {
-                d1 = Pipe.Direction.NORTH;
-                break;
-            }
-            case WEST: {
-                d1 = Pipe.Direction.EAST;
-                break;
-            }
-            default: {
-                throw new IllegalStateException();
-            }
-        }
-        switch (d1) {
-            case EAST: {
-                d2 = Direction.SOUTH;
-                break;
-            }
-            case NORTH: {
-                d2 = Direction.EAST;
-                break;
-            }
-            case SOUTH: {
-                d2 = Direction.WEST;
-                break;
-            }
-            case WEST: {
-                d2 = Direction.NORTH;
-                break;
-            }
-            default: {
-                throw new IllegalStateException();
-            }
-        }
-
-        Set<Direction> result = new HashSet<>();
-        result.add(d1);
-        result.add(d2);
-        return result;
+        Direction d1 = switch (super.getDirection()) {
+            case EAST -> Direction.WEST;
+            case NORTH -> Direction.SOUTH;
+            case SOUTH -> Direction.NORTH;
+            case WEST -> Direction.EAST;
+        };
+        Direction d2 = switch (d1) {
+            case EAST -> Direction.SOUTH;
+            case NORTH -> Direction.EAST;
+            case SOUTH -> Direction.WEST;
+            case WEST -> Direction.NORTH;
+        };
+        return Set.of(d1, d2);
     }
 }
