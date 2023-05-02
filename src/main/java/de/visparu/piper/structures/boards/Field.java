@@ -1,11 +1,12 @@
-package de.visparu.piper.structures;
+package de.visparu.piper.structures.boards;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
 import de.visparu.piper.root.Piper;
-import de.visparu.piper.structures.Pipe.Direction;
+import de.visparu.piper.structures.pipes.Pipe;
+import de.visparu.piper.structures.pipes.Pipe.Direction;
 
 public class Field
 {

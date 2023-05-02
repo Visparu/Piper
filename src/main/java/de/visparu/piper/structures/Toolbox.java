@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
+import de.visparu.piper.structures.boards.Field;
+import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.standard.CrossPipe;
 import de.visparu.piper.structures.pipes.standard.CurvedPipe;
 import de.visparu.piper.structures.pipes.standard.DeadEndPipe;
@@ -31,8 +33,8 @@ public class Toolbox
 	
 	private Random rand;
 	
-	private List<Field>	fields	= new ArrayList<>();
-	private Queue<Pipe>	pipes	= new ArrayDeque<>();
+	private List<Field> fields = new ArrayList<>();
+	private Queue<Pipe> pipes  = new ArrayDeque<>();
 	
 	private Map<Class<? extends Pipe>, Integer> percentiles = new HashMap<>();
 	

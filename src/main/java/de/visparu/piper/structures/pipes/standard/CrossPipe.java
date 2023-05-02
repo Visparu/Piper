@@ -3,7 +3,7 @@ package de.visparu.piper.structures.pipes.standard;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.visparu.piper.structures.Pipe;
+import de.visparu.piper.structures.pipes.Pipe;
 
 public class CrossPipe extends Pipe
 {

@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.visparu.piper.root.Piper;
-import de.visparu.piper.structures.Field;
+import de.visparu.piper.structures.boards.Field;
 
 public class Input
 {

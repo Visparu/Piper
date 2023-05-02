@@ -1,4 +1,4 @@
-package de.visparu.piper.structures;
+package de.visparu.piper.structures.boards;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -15,7 +15,8 @@ import java.util.Random;
 import java.util.Set;
 
 import de.visparu.piper.settings.Settings;
-import de.visparu.piper.structures.Pipe.Direction;
+import de.visparu.piper.structures.pipes.Pipe;
+import de.visparu.piper.structures.pipes.Pipe.Direction;
 import de.visparu.piper.structures.pipes.standard.CrossPipe;
 import de.visparu.piper.structures.pipes.standard.CurvedPipe;
 import de.visparu.piper.structures.pipes.standard.DeadEndPipe;
@@ -70,7 +71,7 @@ public class Board
 		{
 			int entryIndex = rand.nextInt(possibleEntryFields.size());
 			Field entryField = possibleEntryFields.get(entryIndex);
-			Pipe entryPipe = new StraightPipe(Direction.EAST, Direction.WEST);
+			Pipe  entryPipe  = new StraightPipe(Direction.EAST, Direction.WEST);
 			entryField.setPipe(entryPipe);
 			entryField.setEntry(true);
 			possibleEntryFields.remove(entryIndex);

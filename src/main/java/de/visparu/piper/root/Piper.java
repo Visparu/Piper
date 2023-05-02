@@ -3,7 +3,7 @@ package de.visparu.piper.root;
 import java.util.Random;
 
 import de.visparu.piper.settings.Settings;
-import de.visparu.piper.structures.Board;
+import de.visparu.piper.structures.boards.Board;
 import de.visparu.piper.structures.Toolbox;
 import de.visparu.piper.ui.GameWindow;
 

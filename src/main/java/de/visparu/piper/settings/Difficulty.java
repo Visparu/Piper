@@ -1,7 +1,7 @@
 package de.visparu.piper.settings;
 
 import de.visparu.piper.root.Framework;
-import de.visparu.piper.structures.Pipe;
+import de.visparu.piper.structures.pipes.Pipe;
 
 public final class Difficulty
 {
