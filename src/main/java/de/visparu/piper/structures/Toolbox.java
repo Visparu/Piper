@@ -28,8 +28,6 @@ public class Toolbox {
 
     public static final int PIPE_PREVIEW_AMOUNT = 5;
 
-    private final GameContext context;
-
     private final Random rand;
 
     private final List<Field> fields = new ArrayList<>();
@@ -37,10 +35,8 @@ public class Toolbox {
 
     private final Map<Class<? extends Pipe>, Integer> percentiles = new HashMap<>();
 
-    public Toolbox(GameContext context,
-                   Random rand) {
-        this.context = context;
-        this.rand    = rand;
+    public Toolbox(Random rand) {
+        this.rand = rand;
         for (int i = 0; i < Toolbox.PIPE_PREVIEW_AMOUNT; i++) {
             this.fields.add(new Field());
         }
@@ -49,10 +45,10 @@ public class Toolbox {
     }
 
     private void populatePercentiles() {
-        this.percentiles.put(StraightPipe.class, 15);
-        this.percentiles.put(CurvedPipe.class, 30);
-        this.percentiles.put(SplitPipe.class, 60);
-        this.percentiles.put(CrossPipe.class, 80);
+        this.percentiles.put(StraightPipe.class, 25);
+        this.percentiles.put(CurvedPipe.class, 55);
+        this.percentiles.put(SplitPipe.class, 80);
+        this.percentiles.put(CrossPipe.class, 90);
         this.percentiles.put(DeadEndPipe.class, 100);
     }
 
@@ -69,8 +65,9 @@ public class Toolbox {
     }
 
     public void render(Graphics2D g2d) {
-        float completeSpacingV = this.context.getGameWindow()
-                                             .getToolboxCanvasHeight() - this.fields.size() * Field.SIZE;
+        float completeSpacingV = GameContext.get()
+                                            .getGameWindow()
+                                            .getToolboxCanvasHeight() - this.fields.size() * Field.SIZE;
         float singularSpacingV = completeSpacingV / (this.fields.size() + 1);
         for (int i = 0; i < this.fields.size(); i++) {
             int x = Toolbox.PANEL_SPACING_H;

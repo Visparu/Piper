@@ -21,8 +21,6 @@ import de.visparu.piper.structures.pipes.Pipe.Direction;
 public class Board {
     public static final Color COLOR_PAUSE = Color.WHITE;
 
-    private final GameContext context;
-
     private final BoardRenderer boardRenderer;
 
     private final Map<Field, Point> coordinates;
@@ -39,8 +37,7 @@ public class Board {
     private boolean won    = false;
     private boolean lost   = false;
 
-    public Board(GameContext context,
-                 int width,
+    public Board(int width,
                  int height,
                  float startDelaySeconds,
                  float progressIncrement,
@@ -48,7 +45,6 @@ public class Board {
                  int entries,
                  int exits,
                  Random rand) {
-        this.context           = context;
         this.startDelaySeconds = startDelaySeconds;
         this.progressIncrement = progressIncrement;
         this.fields            = new Field[height][width];
@@ -93,8 +89,9 @@ public class Board {
             return;
         }
         usedPipes.add(pipe);
-        float nextIncrement = pipe.increaseProgress(this.context.getInput()
-                                                                .isKeyDown(KeyEvent.VK_SPACE) ? Settings.ACCELERATED_PROGRESS_INCREMENT * delta : this.progressIncrement * delta);
+        float nextIncrement = pipe.increaseProgress(GameContext.get()
+                                                               .getInput()
+                                                               .isKeyDown(KeyEvent.VK_SPACE) ? Settings.ACCELERATED_PROGRESS_INCREMENT * delta : this.progressIncrement * delta);
         if (nextIncrement > 0.0F) {
             if (this.exitFields.contains(field)) {
                 this.checkForWin();
