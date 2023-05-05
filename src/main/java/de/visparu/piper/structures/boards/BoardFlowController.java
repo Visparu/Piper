@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class BoardFlowController {
     private final Board board;
-    private float startDelaySeconds;
+    private       float startDelaySeconds;
     private final float progressIncrement;
 
     public BoardFlowController(final Board board,
@@ -38,11 +38,11 @@ public class BoardFlowController {
     }
 
     private void incrementPipeProgress(float delta,
-                                      Field field,
-                                      Set<Pipe> usedPipes) {
+                                       Field field,
+                                       Set<Pipe> usedPipes) {
         Pipe pipe = field.getPipe();
         if (pipe == null) {
-            this.board.lose(field, null);
+            field.setLossField(true);
             return;
         }
         usedPipes.add(pipe);
@@ -78,57 +78,57 @@ public class BoardFlowController {
             Field nextField;
             switch (d) {
                 case EAST -> {
-                    if (p.x + 1 >= this.board.getFields()[0].length) {
-                        this.board.lose(field, null);
+                    if (p.x + 1 >= this.board.getBoardWidth()) {
+                        field.setLossField(true);
                         return;
                     }
-                    nextField = this.board.getFields()[p.y][p.x + 1];
+                    nextField = this.board.getField(p.x + 1, p.y);
                     Pipe nextPipe = nextField.getPipe();
                     if (nextPipe == null || !nextPipe.getOpeningDirections()
                                                      .contains(Pipe.Direction.WEST)) {
-                        this.board.lose(field, nextField);
+                        nextField.setLossField(true);
                         return;
                     }
                     nextPipe.addEntryPoint(Pipe.Direction.WEST);
                 }
                 case NORTH -> {
                     if (p.y - 1 < 0) {
-                        this.board.lose(field, null);
+                        field.setLossField(true);
                         return;
                     }
-                    nextField = this.board.getFields()[p.y - 1][p.x];
+                    nextField = this.board.getField(p.x, p.y - 1);
                     Pipe nextPipe = nextField.getPipe();
                     if (nextPipe == null || !nextPipe.getOpeningDirections()
                                                      .contains(Pipe.Direction.SOUTH)) {
-                        this.board.lose(field, nextField);
+                        nextField.setLossField(true);
                         return;
                     }
                     nextPipe.addEntryPoint(Pipe.Direction.SOUTH);
                 }
                 case SOUTH -> {
-                    if (p.y + 1 >= this.board.getFields().length) {
-                        this.board.lose(field, null);
+                    if (p.y + 1 >= this.board.getBoardHeight()) {
+                        field.setLossField(true);
                         return;
                     }
-                    nextField = this.board.getFields()[p.y + 1][p.x];
+                    nextField = this.board.getField(p.x, p.y + 1);
                     Pipe nextPipe = nextField.getPipe();
                     if (nextPipe == null || !nextPipe.getOpeningDirections()
                                                      .contains(Pipe.Direction.NORTH)) {
-                        this.board.lose(field, nextField);
+                        nextField.setLossField(true);
                         return;
                     }
                     nextPipe.addEntryPoint(Pipe.Direction.NORTH);
                 }
                 case WEST -> {
                     if (p.x - 1 < 0) {
-                        this.board.lose(field, null);
+                        field.setLossField(true);
                         return;
                     }
-                    nextField = this.board.getFields()[p.y][p.x - 1];
+                    nextField = this.board.getField(p.x - 1, p.y);
                     Pipe nextPipe = nextField.getPipe();
                     if (nextPipe == null || !nextPipe.getOpeningDirections()
                                                      .contains(Pipe.Direction.EAST)) {
-                        this.board.lose(field, nextField);
+                        nextField.setLossField(true);
                         return;
                     }
                     nextPipe.addEntryPoint(Pipe.Direction.EAST);
@@ -157,7 +157,13 @@ public class BoardFlowController {
                 }
             }
             if (!leak) {
-                this.board.lose(field, null);
+                this.board.getExitFields()
+                          .forEach(exitField -> exitField.setLossField(true));
+                this.board.getFixedFields()
+                          .stream()
+                          .filter(fixedField -> fixedField.getPipe()
+                                                          .getProgress() == 0.0F)
+                          .forEach(fixedField -> fixedField.setLossField(true));
             }
         }
     }
@@ -175,11 +181,11 @@ public class BoardFlowController {
         if (pipe.getProgress() < 100.0F) {
             return true;
         }
+        if (this.board.getExitFields()
+                      .contains(field)) {
+            return false;
+        }
         for (Pipe.Direction d : pipe.getOpeningDirections()) {
-            if (this.board.getExitFields()
-                          .contains(field)) {
-                break;
-            }
             if (pipe.getEntryPoints()
                     .contains(d)) {
                 continue;
@@ -210,10 +216,10 @@ public class BoardFlowController {
             if (xt < 0 || yt < 0) {
                 return true;
             }
-            if (xt >= this.board.getFields()[0].length || yt >= this.board.getFields().length) {
+            if (xt >= this.board.getBoardWidth() || yt >= this.board.getBoardHeight()) {
                 return true;
             }
-            Field nextField = this.board.getFields()[yt][xt];
+            Field nextField = this.board.getField(xt, yt);
             Pipe  nextPipe  = nextField.getPipe();
             if (nextPipe == null) {
                 return true;

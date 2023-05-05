@@ -60,6 +60,7 @@ public class Board {
             return;
         }
         this.boardFlowController.tick(delta);
+        this.checkForLoss();
     }
 
     public void checkForWin() {
@@ -72,25 +73,29 @@ public class Board {
         }
 
         if (noLeakLeft) {
+            boolean fixedFieldsCovered = true;
             for (Field fixedField : this.fixedFields) {
                 Pipe fixedPipe = fixedField.getPipe();
                 if (fixedPipe.getProgress() != Pipe.MAX_PROGRESS) {
-                    this.lose(fixedField, null);
-                    return;
+                    fixedField.setLossField(true);
+                    fixedFieldsCovered = false;
                 }
             }
-            this.won = true;
+            if (fixedFieldsCovered) {
+                this.won = true;
+            }
         }
     }
 
-    public void lose(Field from,
-                     Field to) {
-        if (to == null) {
-            from.setLossField(true);
-        } else {
-            to.setLossField(true);
+    public void checkForLoss() {
+        for (Field[] fieldRow : this.fields) {
+            for (Field field : fieldRow) {
+                if (field.isLossField()) {
+                    this.lost = true;
+                    return;
+                }
+            }
         }
-        this.lost = true;
     }
 
     public void addPipe(int x,
@@ -125,11 +130,6 @@ public class Board {
         return x >= this.fields[0].length || y >= this.fields.length;
     }
 
-    public Field getField(int x,
-                          int y) {
-        return this.fields[y][x];
-    }
-
     public int getCanvasWidth() {
         return this.fields[0].length * Field.SIZE;
     }
@@ -158,8 +158,17 @@ public class Board {
         return this.lost;
     }
 
-    public Field[][] getFields() {
-        return this.fields;
+    public int getBoardWidth() {
+        return this.fields[0].length;
+    }
+
+    public int getBoardHeight() {
+        return this.fields.length;
+    }
+
+    public Field getField(int x,
+                          int y) {
+        return this.fields[y][x];
     }
 
     public List<Field> getEntryFields() {
@@ -168,6 +177,10 @@ public class Board {
 
     public List<Field> getExitFields() {
         return this.exitFields;
+    }
+
+    public List<Field> getFixedFields() {
+        return this.fixedFields;
     }
 
     public Map<Field, Point> getCoordinates() {

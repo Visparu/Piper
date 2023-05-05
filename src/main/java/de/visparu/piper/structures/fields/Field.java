@@ -96,6 +96,10 @@ public class Field {
         this.fixed = fixed;
     }
 
+    public boolean isLossField() {
+        return this.lossField;
+    }
+
     public void setLossField(boolean lossField) {
         this.lossField = lossField;
     }
