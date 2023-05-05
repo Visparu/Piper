@@ -7,19 +7,37 @@ import de.visparu.piper.structures.pipes.Pipe;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
 import java.util.Set;
 
 public class BoardFlowController {
     private final Board board;
+    private float startDelaySeconds;
     private final float progressIncrement;
 
     public BoardFlowController(final Board board,
+                               final float startDelaySeconds,
                                final float progressIncrement) {
         this.board             = board;
+        this.startDelaySeconds = startDelaySeconds;
         this.progressIncrement = progressIncrement;
     }
 
-    public void incrementPipeProgress(float delta,
+    public void tick(float delta) {
+        if (this.startDelaySeconds > 0) {
+            this.startDelaySeconds -= delta;
+            return;
+        }
+        if (this.board.hasLost() || this.board.hasWon()) {
+            return;
+        }
+        Set<Pipe> usedPipes = new HashSet<>();
+        for (Field startingField : this.board.getEntryFields()) {
+            this.incrementPipeProgress(delta, startingField, usedPipes);
+        }
+    }
+
+    private void incrementPipeProgress(float delta,
                                       Field field,
                                       Set<Pipe> usedPipes) {
         Pipe pipe = field.getPipe();

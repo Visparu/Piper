@@ -5,11 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import de.visparu.piper.structures.fields.Field;
 import de.visparu.piper.structures.pipes.Pipe;
@@ -28,8 +26,6 @@ public class Board {
     private final List<Field> exitFields;
     private final List<Field> fixedFields;
 
-    private       float startDelaySeconds;
-
     private boolean paused = false;
     private boolean won    = false;
     private boolean lost   = false;
@@ -42,7 +38,6 @@ public class Board {
                  int entries,
                  int exits,
                  Random rand) {
-        this.startDelaySeconds = startDelaySeconds;
         this.fields            = new Field[height][width];
         this.entryFields       = new ArrayList<>();
         this.exitFields        = new ArrayList<>();
@@ -51,7 +46,7 @@ public class Board {
 
         BoardInitializer boardInitializer = new BoardInitializer(this, rand, entries, exits, fixedPieces, this.fields, this.entryFields, this.exitFields, this.fixedFields, this.coordinates);
         this.boardRenderer = new BoardRenderer(this.fields);
-        this.boardFlowController = new BoardFlowController(this, progressIncrement);
+        this.boardFlowController = new BoardFlowController(this, startDelaySeconds, progressIncrement);
 
         boardInitializer.initialize();
     }
@@ -64,17 +59,7 @@ public class Board {
         if (this.paused) {
             return;
         }
-        if (this.startDelaySeconds > 0) {
-            this.startDelaySeconds -= delta;
-            return;
-        }
-        if (this.lost || this.won) {
-            return;
-        }
-        Set<Pipe> usedPipes = new HashSet<>();
-        for (Field startingField : this.entryFields) {
-            this.boardFlowController.incrementPipeProgress(delta, startingField, usedPipes);
-        }
+        this.boardFlowController.tick(delta);
     }
 
     public void checkForWin() {
