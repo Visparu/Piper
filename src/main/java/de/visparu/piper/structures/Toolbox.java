@@ -5,11 +5,10 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import de.visparu.piper.context.GameContext;
 import de.visparu.piper.structures.fields.Field;
@@ -33,7 +32,7 @@ public class Toolbox {
     private final List<Field> fields = new ArrayList<>();
     private final Queue<Pipe> pipes  = new ArrayDeque<>();
 
-    private final Map<Class<? extends Pipe>, Integer> percentiles = new HashMap<>();
+    private final List<Class<? extends Pipe>> weights = new ArrayList<>();
 
     public Toolbox(Random rand) {
         this.rand = rand;
@@ -45,11 +44,17 @@ public class Toolbox {
     }
 
     private void populatePercentiles() {
-        this.percentiles.put(StraightPipe.class, 25);
-        this.percentiles.put(CurvedPipe.class, 55);
-        this.percentiles.put(SplitPipe.class, 80);
-        this.percentiles.put(CrossPipe.class, 90);
-        this.percentiles.put(DeadEndPipe.class, 100);
+        this.populateWeight(StraightPipe.class, 6);
+        this.populateWeight(CurvedPipe.class, 5);
+        this.populateWeight(SplitPipe.class, 4);
+        this.populateWeight(CrossPipe.class, 1);
+        this.populateWeight(DeadEndPipe.class, 2);
+    }
+
+    private void populateWeight(Class<? extends Pipe> pipeClass,
+                                int weight) {
+        IntStream.range(0, weight)
+                 .forEach(unused -> this.weights.add(pipeClass));
     }
 
     private void reinitializeList() {
@@ -88,17 +93,13 @@ public class Toolbox {
     }
 
     public Pipe createNewPipe() {
-        int percentage = this.rand.nextInt(100);
-        if (percentage < this.percentiles.get(StraightPipe.class)) {
-            return new StraightPipe();
-        } else if (percentage < this.percentiles.get(CurvedPipe.class)) {
-            return new CurvedPipe();
-        } else if (percentage < this.percentiles.get(SplitPipe.class)) {
-            return new SplitPipe();
-        } else if (percentage < this.percentiles.get(CrossPipe.class)) {
-            return new CrossPipe();
-        } else {
-            return new DeadEndPipe();
+        int percentage = this.rand.nextInt(this.weights.size());
+        try {
+            return this.weights.get(percentage)
+                               .getConstructor()
+                               .newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
