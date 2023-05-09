@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
+import de.visparu.piper.structures.boards.initializers.BoardInitializer;
 import de.visparu.piper.structures.fields.Field;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.Pipe.Direction;
@@ -16,15 +16,16 @@ import de.visparu.piper.structures.pipes.Pipe.Direction;
 public class Board {
     public static final Color COLOR_PAUSE = Color.WHITE;
 
-    private final BoardRenderer boardRenderer;
     private final BoardFlowController boardFlowController;
+    private final BoardRenderer       boardRenderer;
+    private final BoardInitializer    boardInitializer;
 
     private final Map<Field, Point> coordinates;
     private final Field[][]         fields;
 
-    private final List<Field> entryFields;
-    private final List<Field> exitFields;
-    private final List<Field> fixedFields;
+    private List<Field> entryFields;
+    private List<Field> exitFields;
+    private List<Field> fixedFields;
 
     private boolean paused = false;
     private boolean won    = false;
@@ -32,23 +33,36 @@ public class Board {
 
     public Board(int width,
                  int height,
-                 float startDelaySeconds,
-                 float progressIncrement,
-                 int[] fixedPieces,
-                 int entries,
-                 int exits,
-                 Random rand) {
-        this.fields            = new Field[height][width];
-        this.entryFields       = new ArrayList<>();
-        this.exitFields        = new ArrayList<>();
-        this.fixedFields       = new ArrayList<>();
-        this.coordinates       = new HashMap<>();
+                 BoardFlowController boardFlowController,
+                 BoardRenderer boardRenderer,
+                 BoardInitializer boardInitializer) {
+        this.fields      = new Field[height][width];
+        this.entryFields = new ArrayList<>();
+        this.exitFields  = new ArrayList<>();
+        this.fixedFields = new ArrayList<>();
+        this.coordinates = new HashMap<>();
 
-        BoardInitializer boardInitializer = new BoardInitializer(this, rand, entries, exits, fixedPieces, this.fields, this.entryFields, this.exitFields, this.fixedFields, this.coordinates);
-        this.boardRenderer = new BoardRenderer(this.fields);
-        this.boardFlowController = new BoardFlowController(this, startDelaySeconds, progressIncrement);
+        this.boardFlowController = boardFlowController;
+        this.boardRenderer       = boardRenderer;
+        this.boardInitializer    = boardInitializer;
 
-        boardInitializer.initialize();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Field field = new Field(x, y);
+                this.fields[y][x] = field;
+                this.coordinates.put(field, new Point(x, y));
+            }
+        }
+    }
+
+    public void initialize() {
+        boardFlowController.initialize(this);
+        boardRenderer.initialize(this);
+        boardInitializer.initialize(this);
+
+        this.entryFields = boardInitializer.getEntryFields();
+        this.exitFields  = boardInitializer.getExitFields();
+        this.fixedFields = boardInitializer.getFixedFields();
     }
 
     public void render(Graphics2D g2d) {
@@ -77,7 +91,7 @@ public class Board {
             for (Field fixedField : this.fixedFields) {
                 Pipe fixedPipe = fixedField.getPipe();
                 if (fixedPipe.getProgress() != Pipe.MAX_PROGRESS) {
-                    fixedField.setLossField(true);
+                    fixedField.setAsLossField();
                     fixedFieldsCovered = false;
                 }
             }

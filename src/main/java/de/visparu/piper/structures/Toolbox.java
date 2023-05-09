@@ -81,7 +81,7 @@ public class Toolbox {
             BufferedImage img     = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
             Graphics2D    g2d_img = img.createGraphics();
             this.fields.get(i)
-                       .render(g2d_img);
+                       .render(g2d_img, false);
             g2d_img.dispose();
             g2d.drawImage(img, x, y, null);
         }

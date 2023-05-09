@@ -8,6 +8,10 @@ import de.visparu.piper.context.GameContext;
 import de.visparu.piper.settings.Settings;
 import de.visparu.piper.structures.boards.Board;
 import de.visparu.piper.structures.Toolbox;
+import de.visparu.piper.structures.boards.BoardFlowController;
+import de.visparu.piper.structures.boards.BoardRenderer;
+import de.visparu.piper.structures.boards.initializers.BoardInitializer;
+import de.visparu.piper.structures.boards.initializers.RandomBoardInitializer;
 import de.visparu.piper.structures.fields.Field;
 import de.visparu.piper.ui.io.InputObserver;
 
@@ -15,8 +19,7 @@ public final class Game implements InputObserver {
     private Board   board;
     private Toolbox toolbox;
 
-    public void initialize()
-    {
+    public void initialize() {
         GameContext.get()
                    .getInput()
                    .registerInputObserver(this);
@@ -43,13 +46,25 @@ public final class Game implements InputObserver {
         this.newGame(new Random());
     }
 
-    public void newGame(Random rand) {
+    public void newGame(Random seed) {
         this.unregisterAsObserver();
-        Board   board   = new Board(Settings.BOARD_WIDTH, Settings.BOARD_HEIGHT, Settings.START_DELAY_SECONDS, Settings.PROGRESS_INCREMENT, Settings.BOARD_FIXED_PIECES, Settings.BOARD_ENTRIES, Settings.BOARD_EXITS, rand);
-        Toolbox toolbox = new Toolbox(rand);
+
+        BoardInitializer    boardInitializer    = new RandomBoardInitializer(seed, Settings.BOARD_ENTRIES, Settings.BOARD_EXITS, Settings.BOARD_FIXED_PIECES);
+        BoardFlowController boardFlowController = new BoardFlowController(Settings.START_DELAY_SECONDS, Settings.PROGRESS_INCREMENT);
+        BoardRenderer          boardRenderer       = new BoardRenderer();
+
+        Board                  board               = new Board(Settings.BOARD_WIDTH, Settings.BOARD_HEIGHT, boardFlowController, boardRenderer, boardInitializer);
+        Toolbox                toolbox             = new Toolbox(seed);
+
         this.board   = board;
         this.toolbox = toolbox;
-        GameContext.get().getGameWindow().resize();
+
+        this.board.initialize();
+
+        GameContext.get()
+                   .getGameWindow()
+                   .resize();
+
         this.registerAsObserver();
     }
 

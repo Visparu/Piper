@@ -2,9 +2,7 @@ package de.visparu.piper.structures.fields;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 
-import de.visparu.piper.structures.boards.Board;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.Pipe.Direction;
 
@@ -17,8 +15,10 @@ public class Field {
 
     public static final int SIZE = 50;
 
-    private final Board parentBoard;
     private       Pipe  pipe;
+
+    private final int boardX;
+    private final int boardY;
 
     private boolean entry     = false;
     private boolean exit      = false;
@@ -26,23 +26,21 @@ public class Field {
     private boolean lossField = false;
 
     public Field() {
-        this(null);
+        this(-1, -1);
     }
 
-    public Field(Board parentBoard) {
-        this.parentBoard = parentBoard;
+    public Field(int boardX, int boardY) {
+        this.boardX = boardX;
+        this.boardY = boardY;
     }
 
     @Override
     public String toString() {
-        Point p = this.parentBoard != null ? this.parentBoard.getFieldPosition(this) : null;
-        int x = (p == null) ? -1 : p.x;
-        int y = (p == null) ? -1 : p.y;
-        return String.format("Field: {x: %d, y: %d, Loss field: %b, %s}", x, y, this.lossField, this.pipe);
+        return String.format("Field: {x: %d, y: %d, Loss field: %b, %s}", this.boardX, this.boardY, this.lossField, this.pipe);
     }
 
-    public void render(Graphics2D g2d) {
-        if (this.parentBoard != null && this.parentBoard.hasWon()) {
+    public void render(Graphics2D g2d, boolean won) {
+        if (won) {
             g2d.setColor(Field.COLOR_WON);
         } else if (this.lossField) {
             g2d.setColor(Field.COLOR_LOSS);
@@ -84,6 +82,14 @@ public class Field {
         this.pipe = pipe;
     }
 
+    public int getBoardX() {
+        return this.boardX;
+    }
+
+    public int getBoardY() {
+        return this.boardY;
+    }
+
     public void setEntry(boolean entry) {
         this.entry = entry;
     }
@@ -100,7 +106,7 @@ public class Field {
         return this.lossField;
     }
 
-    public void setLossField(boolean lossField) {
-        this.lossField = lossField;
+    public void setAsLossField() {
+        this.lossField = true;
     }
 }

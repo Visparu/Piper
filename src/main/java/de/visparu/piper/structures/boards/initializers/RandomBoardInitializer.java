@@ -1,6 +1,7 @@
-package de.visparu.piper.structures.boards;
+package de.visparu.piper.structures.boards.initializers;
 
 import de.visparu.piper.settings.Settings;
+import de.visparu.piper.structures.boards.Board;
 import de.visparu.piper.structures.fields.Field;
 import de.visparu.piper.structures.pipes.Pipe;
 import de.visparu.piper.structures.pipes.standard.CrossPipe;
@@ -9,59 +10,38 @@ import de.visparu.piper.structures.pipes.standard.DeadEndPipe;
 import de.visparu.piper.structures.pipes.standard.SplitPipe;
 import de.visparu.piper.structures.pipes.standard.StraightPipe;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-public class BoardInitializer {
-    private final Board             board;
+public class RandomBoardInitializer implements BoardInitializer {
     private final Random            rand;
     private final int               entries;
     private final int               exits;
-    private final int[]       fixedPieces;
-    private final Field[][]   fields;
-    private final List<Field> entryFields;
+    private final int[]             fixedPieces;
+    private final List<Field>       entryFields;
     private final List<Field>       exitFields;
     private final List<Field>       fixedFields;
-    private final Map<Field, Point> coordinates;
 
-    public BoardInitializer(Board board,
-                            Random rand,
-                            int entries,
-                            int exits,
-                            int[] fixedPieces,
-                            Field[][] fields,
-                            List<Field> entryFields,
-                            List<Field> exitFields,
-                            List<Field> fixedFields,
-                            Map<Field, Point> coordinates) {
-        this.board       = board;
+    public RandomBoardInitializer(Random rand,
+                                  int entries,
+                                  int exits,
+                                  int[] fixedPieces) {
         this.rand        = rand;
         this.entries     = entries;
         this.exits       = exits;
         this.fixedPieces = fixedPieces;
-        this.fields      = fields;
-        this.entryFields = entryFields;
-        this.exitFields  = exitFields;
-        this.fixedFields = fixedFields;
-        this.coordinates = coordinates;
+        this.entryFields = new ArrayList<>();
+        this.exitFields  = new ArrayList<>();
+        this.fixedFields = new ArrayList<>();
     }
 
-    public void initialize() {
-        for (int y = 0; y < this.fields.length; y++) {
-            for (int x = 0; x < this.fields[y].length; x++) {
-                Field field = new Field(this.board);
-                this.fields[y][x] = field;
-                this.coordinates.put(field, new Point(x, y));
-            }
-        }
-
+    @Override
+    public void initialize(Board board) {
         // Start fields
         List<Field> possibleEntryFields = new ArrayList<>();
-        for (Field[] field : this.fields) {
-            possibleEntryFields.add(field[0]);
+        for (int y = 0; y < board.getBoardHeight(); y++) {
+            possibleEntryFields.add(board.getField(0, y));
         }
         for (int i = 0; i < this.entries; i++) {
             int   entryIndex = this.rand.nextInt(possibleEntryFields.size());
@@ -75,8 +55,8 @@ public class BoardInitializer {
 
         // End fields
         List<Field> possibleExitFields = new ArrayList<>();
-        for (Field[] field : this.fields) {
-            possibleExitFields.add(field[field.length - 1]);
+        for (int y = 0; y < board.getBoardHeight(); y++) {
+            possibleExitFields.add(board.getField(board.getBoardWidth() - 1, y));
         }
         for (int i = 0; i < exits; i++) {
             int   exitIndex = rand.nextInt(possibleExitFields.size());
@@ -111,18 +91,17 @@ public class BoardInitializer {
                     default -> throw new IllegalStateException();
                 });
                 List<Field> possibleFields = new ArrayList<>();
-                for (int y = 0; y < this.fields.length; y++) {
-                    for (int x = 0; x < this.fields.length; x++) {
+                for (int y = 0; y < board.getBoardHeight(); y++) {
+                    for (int x = 0; x < board.getBoardWidth(); x++) {
                         if (x == 0 || y == 0) {
                             continue;
                         }
-                        if (x == this.fields[y].length - 1 || y == this.fields.length - 1) {
+                        if (x == board.getBoardWidth() - 1 || y == board.getBoardHeight() - 1) {
                             continue;
                         }
                         boolean proximityFlag = false;
                         for (Field proximityField : proximityFields) {
-                            Point proximityPosition = this.coordinates.get(proximityField);
-                            if (Math.abs(x - proximityPosition.x) <= 1 && Math.abs(y - proximityPosition.y) <= 1) {
+                            if (Math.abs(x - proximityField.getBoardX()) <= 1 && Math.abs(y - proximityField.getBoardY()) <= 1) {
                                 proximityFlag = true;
                                 break;
                             }
@@ -130,7 +109,7 @@ public class BoardInitializer {
                         if (proximityFlag) {
                             continue;
                         }
-                        possibleFields.add(this.fields[y][x]);
+                        possibleFields.add(board.getField(x, y));
                     }
                 }
 
@@ -142,5 +121,20 @@ public class BoardInitializer {
                 this.fixedFields.add(newFixedField);
             }
         }
+    }
+
+    @Override
+    public List<Field> getEntryFields() {
+        return this.entryFields;
+    }
+
+    @Override
+    public List<Field> getExitFields() {
+        return this.exitFields;
+    }
+
+    @Override
+    public List<Field> getFixedFields() {
+        return this.fixedFields;
     }
 }

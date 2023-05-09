@@ -9,7 +9,7 @@ public final class Settings {
     private static final int   DEFAULT_BOARD_ENTRIES       = Difficulty.EASY.getEntries();
     private static final int   DEFAULT_BOARD_EXITS         = Difficulty.EASY.getExits();
 
-    public static final float ACCELERATED_PROGRESS_INCREMENT = Settings.DEFAULT_PROGRESS_INCREMENT * 20;
+    public static final float ACCELERATED_PROGRESS_INCREMENT = Settings.DEFAULT_PROGRESS_INCREMENT * 50;
     public static final int   ID_PIPE_STRAIGHT               = 0;
     public static final int   ID_PIPE_CURVED                 = 1;
     public static final int   ID_PIPE_SPLIT                  = 2;

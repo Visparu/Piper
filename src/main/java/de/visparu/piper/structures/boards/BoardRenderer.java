@@ -7,10 +7,10 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public class BoardRenderer {
-    private final Field[][] fields;
+    private Board board;
 
-    public BoardRenderer(Field[][] fields) {
-        this.fields = fields;
+    public void initialize(Board board) {
+        this.board = board;
     }
 
     public void render(Graphics2D g2d, boolean paused) {
@@ -20,12 +20,12 @@ public class BoardRenderer {
             g2d.drawString("Paused... (Press escape to resume)", 20, 20);
             return;
         }
-        for (int y = 0; y < this.fields.length; y++) {
-            for (int x = 0; x < this.fields[y].length; x++) {
-                Field         field   = this.fields[y][x];
+        for (int y = 0; y < this.board.getBoardHeight(); y++) {
+            for (int x = 0; x < this.board.getBoardWidth(); x++) {
+                Field         field   = this.board.getField(x, y);
                 BufferedImage img     = new BufferedImage(Field.SIZE, Field.SIZE, BufferedImage.TYPE_INT_RGB);
                 Graphics2D    g2d_img = img.createGraphics();
-                field.render(g2d_img);
+                field.render(g2d_img, this.board.hasWon());
                 g2d_img.dispose();
                 g2d.drawImage(img, x * Field.SIZE, y * Field.SIZE, null);
             }
