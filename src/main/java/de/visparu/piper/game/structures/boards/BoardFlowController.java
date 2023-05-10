@@ -1,9 +1,8 @@
-package de.visparu.piper.structures.boards;
+package de.visparu.piper.game.structures.boards;
 
 import de.visparu.piper.context.GameContext;
-import de.visparu.piper.settings.Settings;
-import de.visparu.piper.structures.fields.Field;
-import de.visparu.piper.structures.pipes.Pipe;
+import de.visparu.piper.game.structures.fields.Field;
+import de.visparu.piper.game.structures.pipes.Pipe;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -49,8 +48,8 @@ public class BoardFlowController {
         }
         usedPipes.add(pipe);
         float nextIncrement = pipe.increaseProgress(GameContext.get()
-                                                               .getInput()
-                                                               .isKeyDown(KeyEvent.VK_SPACE) ? Settings.ACCELERATED_PROGRESS_INCREMENT * delta : this.progressIncrement * delta);
+                                                               .getInputController()
+                                                               .isKeyDown(KeyEvent.VK_SPACE) ? this.progressIncrement * delta * 50 : this.progressIncrement * delta);
         if (nextIncrement > 0.0F) {
             if (this.board.getExitFields()
                           .contains(field)) {
@@ -80,7 +79,7 @@ public class BoardFlowController {
             Field nextField;
             switch (d) {
                 case EAST -> {
-                    if (p.x + 1 >= this.board.getBoardWidth()) {
+                    if (p.x + 1 >= this.board.getColumnCount()) {
                         field.setAsLossField();
                         return;
                     }
@@ -108,7 +107,7 @@ public class BoardFlowController {
                     nextPipe.addEntryPoint(Pipe.Direction.SOUTH);
                 }
                 case SOUTH -> {
-                    if (p.y + 1 >= this.board.getBoardHeight()) {
+                    if (p.y + 1 >= this.board.getRowCount()) {
                         field.setAsLossField();
                         return;
                     }
@@ -218,7 +217,7 @@ public class BoardFlowController {
             if (xt < 0 || yt < 0) {
                 return true;
             }
-            if (xt >= this.board.getBoardWidth() || yt >= this.board.getBoardHeight()) {
+            if (xt >= this.board.getColumnCount() || yt >= this.board.getRowCount()) {
                 return true;
             }
             Field nextField = this.board.getField(xt, yt);

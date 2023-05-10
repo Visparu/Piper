@@ -1,10 +1,10 @@
-package de.visparu.piper.structures.fields;
+package de.visparu.piper.game.structures.fields;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import de.visparu.piper.structures.pipes.Pipe;
-import de.visparu.piper.structures.pipes.Pipe.Direction;
+import de.visparu.piper.game.structures.pipes.Pipe;
+import de.visparu.piper.game.structures.pipes.Pipe.Direction;
 
 public class Field {
     public static final Color COLOR_BACKGROUND = Color.LIGHT_GRAY;

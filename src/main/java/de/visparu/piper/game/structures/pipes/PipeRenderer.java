@@ -1,4 +1,4 @@
-package de.visparu.piper.structures.pipes;
+package de.visparu.piper.game.structures.pipes;
 
 import java.awt.Graphics2D;
 import java.util.Set;

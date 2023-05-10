@@ -1,17 +1,20 @@
-package de.visparu.piper.structures.boards;
+package de.visparu.piper.game.structures.boards;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.visparu.piper.structures.boards.initializers.BoardInitializer;
-import de.visparu.piper.structures.fields.Field;
-import de.visparu.piper.structures.pipes.Pipe;
-import de.visparu.piper.structures.pipes.Pipe.Direction;
+import de.visparu.piper.context.GameContext;
+import de.visparu.piper.game.structures.boards.initializers.BoardInitializer;
+import de.visparu.piper.game.structures.fields.Field;
+import de.visparu.piper.game.structures.pipes.Pipe;
+import de.visparu.piper.game.structures.pipes.Pipe.Direction;
 
 public class Board {
     public static final Color COLOR_PAUSE = Color.WHITE;
@@ -69,7 +72,7 @@ public class Board {
         this.boardRenderer.render(g2d, this.paused);
     }
 
-    public void tick(float delta) {
+    public void update(float delta) {
         if (this.paused) {
             return;
         }
@@ -144,12 +147,24 @@ public class Board {
         return x >= this.fields[0].length || y >= this.fields.length;
     }
 
-    public int getCanvasWidth() {
-        return this.fields[0].length * Field.SIZE;
+    public void mousePressed(int button, float x, float y) {
+        int boardX = (int) (x / Field.SIZE);
+        int boardY = (int) (y / Field.SIZE);
+        if (button == MouseEvent.BUTTON1) {
+            if (this.hasWon() || this.hasLost()) {
+                return;
+            }
+            if (this.getField(boardX, boardY)
+                          .getPipe() == null) {
+                this.addPipe(boardX, boardY, GameContext.get().getGame().getToolbox().pollNextPipe());
+            } else {
+                this.rotatePipe(boardX, boardY);
+            }
+        }
     }
 
-    public int getCanvasHeight() {
-        return this.fields.length * Field.SIZE;
+    public Dimension getDimension() {
+        return new Dimension(this.getColumnCount() * Field.SIZE, this.getRowCount() * Field.SIZE);
     }
 
     public Point getFieldPosition(Field field) {
@@ -172,11 +187,11 @@ public class Board {
         return this.lost;
     }
 
-    public int getBoardWidth() {
+    public int getColumnCount() {
         return this.fields[0].length;
     }
 
-    public int getBoardHeight() {
+    public int getRowCount() {
         return this.fields.length;
     }
 

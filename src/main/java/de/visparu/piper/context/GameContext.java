@@ -1,9 +1,9 @@
 package de.visparu.piper.context;
 
-import de.visparu.piper.root.Framework;
-import de.visparu.piper.root.Game;
+import de.visparu.piper.framework.Framework;
+import de.visparu.piper.game.Game;
 import de.visparu.piper.ui.GameWindow;
-import de.visparu.piper.ui.Input;
+import de.visparu.piper.ui.io.InputController;
 
 public class GameContext {
     private static GameContext instance;
@@ -15,33 +15,40 @@ public class GameContext {
         return GameContext.instance;
     }
 
-    private final GameWindow gameWindow;
-    private final Input     input;
-    private final Game      game;
-    private final Framework framework;
+    private final GameWindow      gameWindow;
+    private final InputController inputController;
+    private final Framework       framework;
+    private Game  game;
 
     private GameContext() {
-        this.gameWindow = new GameWindow();
-        this.input     = new Input();
-        this.game      = new Game();
-        this.framework = new Framework();
+        this.gameWindow      = new GameWindow();
+        this.inputController = new InputController();
+        this.framework       = new Framework();
     }
 
     public void initialize() {
         this.gameWindow.initialize();
-        this.game.initialize();
     }
 
     public void start() {
         this.framework.start();
     }
 
+    public void setGame(Game game) {
+        if (this.game != null) {
+            this.game.dispose();
+        }
+        this.game = game;
+        this.game.initialize();
+        this.gameWindow.resize(this.game.getDimension());
+    }
+
     public GameWindow getGameWindow() {
         return this.gameWindow;
     }
 
-    public Input getInput() {
-        return this.input;
+    public InputController getInputController() {
+        return this.inputController;
     }
 
     public Game getGame() {

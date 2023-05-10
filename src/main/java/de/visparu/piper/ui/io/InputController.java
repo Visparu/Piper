@@ -1,4 +1,4 @@
-package de.visparu.piper.ui;
+package de.visparu.piper.ui.io;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -7,9 +7,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.visparu.piper.ui.io.InputObserver;
-
-public class Input {
+public class InputController {
     private final Keys  keyAdapter;
     private final Mouse mouseAdapter;
 
@@ -17,7 +15,7 @@ public class Input {
 
     private final Set<Integer> keys;
 
-    public Input() {
+    public InputController() {
         this.keyAdapter = new Keys();
         this.mouseAdapter = new Mouse();
         this.inputObservers = new HashSet<>();
@@ -47,26 +45,26 @@ public class Input {
     public class Keys extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            Input.this.keys.add(e.getKeyCode());
-            Input.this.inputObservers.forEach(inputObserver -> inputObserver.keyPressed(e.getKeyCode()));
+            InputController.this.keys.add(e.getKeyCode());
+            InputController.this.inputObservers.forEach(inputObserver -> inputObserver.keyPressed(e.getKeyCode()));
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            Input.this.keys.remove(e.getKeyCode());
-            Input.this.inputObservers.forEach(inputObserver -> inputObserver.keyReleased(e.getKeyCode()));
+            InputController.this.keys.remove(e.getKeyCode());
+            InputController.this.inputObservers.forEach(inputObserver -> inputObserver.keyReleased(e.getKeyCode()));
         }
     }
 
     public class Mouse extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            Input.this.inputObservers.forEach(inputObserver -> inputObserver.mousePressed(e.getButton(), e.getX(), e.getY()));
+            InputController.this.inputObservers.forEach(inputObserver -> inputObserver.mousePressed(e.getButton(), e.getX(), e.getY()));
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            Input.this.inputObservers.forEach(inputObserver -> inputObserver.mouseReleased(e.getButton(), e.getX(), e.getY()));
+            InputController.this.inputObservers.forEach(inputObserver -> inputObserver.mouseReleased(e.getButton(), e.getX(), e.getY()));
         }
     }
 }

@@ -1,9 +1,8 @@
-package de.visparu.piper.structures.pipes.standard;
+package de.visparu.piper.game.structures.pipes.standard;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import de.visparu.piper.structures.pipes.Pipe;
+import de.visparu.piper.game.structures.pipes.Pipe;
 
 public class SplitPipe extends Pipe {
     @Override

@@ -1,7 +1,7 @@
-package de.visparu.piper.structures.boards.initializers;
+package de.visparu.piper.game.structures.boards.initializers;
 
-import de.visparu.piper.structures.boards.Board;
-import de.visparu.piper.structures.fields.Field;
+import de.visparu.piper.game.structures.boards.Board;
+import de.visparu.piper.game.structures.fields.Field;
 
 import java.util.List;
 

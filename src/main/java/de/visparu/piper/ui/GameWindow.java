@@ -2,6 +2,7 @@ package de.visparu.piper.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Dimension;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
@@ -10,8 +11,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import de.visparu.piper.context.GameContext;
-import de.visparu.piper.settings.Difficulty;
-import de.visparu.piper.settings.Settings;
+import de.visparu.piper.game.GameFactory;
+import de.visparu.piper.game.settings.Difficulty;
+import de.visparu.piper.game.settings.Settings;
 
 public final class GameWindow {
     private static final int CANVAS_BUFFERS = 3;
@@ -19,7 +21,7 @@ public final class GameWindow {
     private final JFrame    frame;
     private final JMenuBar  menubar;
     private final JMenu     menuGame;
-    private final JMenuItem menuGameNewgame;
+    private final JMenuItem menuGameNewGame;
     private final JMenuItem menuGameSettings;
     private final JMenuItem menuGameExit;
     private final JMenu     menuDifficulty;
@@ -27,23 +29,21 @@ public final class GameWindow {
     private final JMenuItem menuDifficultyMedium;
     private final JMenuItem menuDifficultyHard;
     private final JMenuItem menuDifficultyWtf;
-    private final Canvas canvasToolbox;
-    private final Canvas canvasBoard;
+    private final Canvas    canvas;
 
     public GameWindow() {
-        this.frame                  = new JFrame();
-        this.menubar           = new JMenuBar();
-        this.menuGame           = new JMenu();
-        this.menuGameNewgame  = new JMenuItem();
-        this.menuGameSettings = new JMenuItem();
+        this.frame                = new JFrame();
+        this.menubar              = new JMenuBar();
+        this.menuGame             = new JMenu();
+        this.menuGameNewGame      = new JMenuItem();
+        this.menuGameSettings     = new JMenuItem();
         this.menuGameExit         = new JMenuItem();
-        this.menuDifficulty         = new JMenu();
+        this.menuDifficulty       = new JMenu();
         this.menuDifficultyEasy   = new JMenuItem();
         this.menuDifficultyMedium = new JMenuItem();
-        this.menuDifficultyHard = new JMenuItem();
-        this.menuDifficultyWtf = new JMenuItem();
-        this.canvasToolbox = new Canvas();
-        this.canvasBoard   = new Canvas();
+        this.menuDifficultyHard   = new JMenuItem();
+        this.menuDifficultyWtf    = new JMenuItem();
+        this.canvas          = new Canvas();
 
         this.configureComponents();
     }
@@ -56,8 +56,8 @@ public final class GameWindow {
         this.menuGame.setText("Game");
         this.menuGame.setMnemonic('g');
 
-        this.menuGameNewgame.setText("New Game");
-        this.menuGameNewgame.setMnemonic('n');
+        this.menuGameNewGame.setText("New Game");
+        this.menuGameNewGame.setMnemonic('n');
 
         this.menuGameSettings.setText("Settings");
         this.menuGameSettings.setMnemonic('s');
@@ -83,13 +83,12 @@ public final class GameWindow {
 
         this.frame.setLayout(new BorderLayout());
         this.frame.add(this.menubar, BorderLayout.NORTH);
-        this.frame.add(this.canvasToolbox, BorderLayout.WEST);
-        this.frame.add(this.canvasBoard, BorderLayout.EAST);
+        this.frame.add(this.canvas, BorderLayout.CENTER);
 
         this.menubar.add(this.menuGame);
         this.menubar.add(this.menuDifficulty);
 
-        this.menuGame.add(this.menuGameNewgame);
+        this.menuGame.add(this.menuGameNewGame);
         this.menuGame.add(this.menuGameSettings);
         this.menuGame.add(this.menuGameExit);
 
@@ -108,84 +107,40 @@ public final class GameWindow {
     }
 
     private void initializeListeners() {
-        this.canvasBoard.addMouseListener(GameContext.get().getInput().getMouseAdapter());
-        this.canvasBoard.addKeyListener(GameContext.get().getInput().getKeyAdapter());
+        this.canvas.addMouseListener(GameContext.get().getInputController().getMouseAdapter());
+        this.canvas.addKeyListener(GameContext.get().getInputController().getKeyAdapter());
 
-        this.menuGameNewgame.addActionListener(e -> GameContext.get().getGame().newGame());
+        this.menuGameNewGame.addActionListener(e -> GameContext.get().setGame(new GameFactory().create(Settings.forDifficulty(Difficulty.EASY))));
         this.menuGameSettings.addActionListener(e -> {
-
+            // TODO: create settings menu
         });
         this.menuGameExit.addActionListener(e -> System.exit(0));
 
-        this.menuDifficultyEasy.addActionListener(e -> {
-            Settings.setDifficulty(Difficulty.EASY);
-            GameContext.get().getGame().newGame();
-        });
-        this.menuDifficultyMedium.addActionListener(e -> {
-            Settings.setDifficulty(Difficulty.MEDIUM);
-            GameContext.get().getGame().newGame();
-        });
-        this.menuDifficultyHard.addActionListener(e -> {
-            Settings.setDifficulty(Difficulty.HARD);
-            GameContext.get().getGame().newGame();
-        });
-        this.menuDifficultyWtf.addActionListener(e -> {
-            Settings.setDifficulty(Difficulty.WTF);
-            GameContext.get().getGame().newGame();
-        });
+        this.menuDifficultyEasy.addActionListener(e -> GameContext.get().setGame(new GameFactory().create(Settings.forDifficulty(Difficulty.EASY))));
+        this.menuDifficultyMedium.addActionListener(e -> GameContext.get().setGame(new GameFactory().create(Settings.forDifficulty(Difficulty.MEDIUM))));
+        this.menuDifficultyHard.addActionListener(e -> GameContext.get().setGame(new GameFactory().create(Settings.forDifficulty(Difficulty.HARD))));
+        this.menuDifficultyWtf.addActionListener(e -> GameContext.get().setGame(new GameFactory().create(Settings.forDifficulty(Difficulty.WTF))));
     }
 
-    public BufferStrategy getToolboxCanvasBufferStrategy() {
-        BufferStrategy bs = this.canvasToolbox.getBufferStrategy();
+    public BufferStrategy getCanvasBufferStrategy() {
+        BufferStrategy bs = this.canvas.getBufferStrategy();
         if (bs == null) {
-            this.canvasToolbox.createBufferStrategy(GameWindow.CANVAS_BUFFERS);
-            bs = this.canvasToolbox.getBufferStrategy();
+            this.canvas.createBufferStrategy(GameWindow.CANVAS_BUFFERS);
+            bs = this.canvas.getBufferStrategy();
         }
         return bs;
     }
 
-    public BufferStrategy getBoardCanvasBufferStrategy() {
-        BufferStrategy bs = this.canvasBoard.getBufferStrategy();
-        if (bs == null) {
-            this.canvasBoard.createBufferStrategy(GameWindow.CANVAS_BUFFERS);
-            bs = this.canvasBoard.getBufferStrategy();
-        }
-        return bs;
+    public int getCanvasWidth() {
+        return this.canvas.getWidth();
     }
 
-    public int getToolboxCanvasWidth() {
-        return this.canvasToolbox.getWidth();
+    public int getCanvasHeight() {
+        return this.canvas.getHeight();
     }
 
-    public int getToolboxCanvasHeight() {
-        return this.canvasToolbox.getHeight();
-    }
-
-    public int getBoardCanvasWidth() {
-        return this.canvasBoard.getWidth();
-    }
-
-    public int getBoardCanvasHeight() {
-        return this.canvasBoard.getHeight();
-    }
-
-    private void setToolboxCanvasSize(int width,
-                                      int height) {
-        this.canvasToolbox.setSize(width, height);
-    }
-
-    private void setBoardCanvasSize(int width,
-                                    int height) {
-        this.canvasBoard.setSize(width, height);
-    }
-
-    public void resize() {
-        this.setToolboxCanvasSize(GameContext.get().getGame().getToolbox()
-                                           .getCanvasWidth(), GameContext.get().getGame().getBoard()
-                                                                       .getCanvasHeight());
-        this.setBoardCanvasSize(GameContext.get().getGame().getBoard()
-                                         .getCanvasWidth(), GameContext.get().getGame().getBoard()
-                                                                     .getCanvasHeight());
+    public void resize(final Dimension dimension) {
+        this.canvas.setSize(dimension);
         this.frame.pack();
         this.frame.setLocationRelativeTo(null);
     }

@@ -1,4 +1,4 @@
-package de.visparu.piper.structures;
+package de.visparu.piper.game.structures;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -11,13 +11,13 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 import de.visparu.piper.context.GameContext;
-import de.visparu.piper.structures.fields.Field;
-import de.visparu.piper.structures.pipes.Pipe;
-import de.visparu.piper.structures.pipes.standard.CrossPipe;
-import de.visparu.piper.structures.pipes.standard.CurvedPipe;
-import de.visparu.piper.structures.pipes.standard.DeadEndPipe;
-import de.visparu.piper.structures.pipes.standard.SplitPipe;
-import de.visparu.piper.structures.pipes.standard.StraightPipe;
+import de.visparu.piper.game.structures.fields.Field;
+import de.visparu.piper.game.structures.pipes.Pipe;
+import de.visparu.piper.game.structures.pipes.standard.CrossPipe;
+import de.visparu.piper.game.structures.pipes.standard.CurvedPipe;
+import de.visparu.piper.game.structures.pipes.standard.DeadEndPipe;
+import de.visparu.piper.game.structures.pipes.standard.SplitPipe;
+import de.visparu.piper.game.structures.pipes.standard.StraightPipe;
 
 public class Toolbox {
     public static final Color COLOR_SELECTED_TILE = Color.GREEN;
@@ -40,6 +40,9 @@ public class Toolbox {
             this.fields.add(new Field());
         }
         this.populatePercentiles();
+    }
+
+    public void initialize() {
         this.reinitializeList();
     }
 
@@ -72,7 +75,7 @@ public class Toolbox {
     public void render(Graphics2D g2d) {
         float completeSpacingV = GameContext.get()
                                             .getGameWindow()
-                                            .getToolboxCanvasHeight() - this.fields.size() * Field.SIZE;
+                                            .getCanvasHeight() - this.fields.size() * Field.SIZE;
         float singularSpacingV = completeSpacingV / (this.fields.size() + 1);
         for (int i = 0; i < this.fields.size(); i++) {
             int x = Toolbox.PANEL_SPACING_H;
@@ -109,7 +112,7 @@ public class Toolbox {
         return pipe;
     }
 
-    public int getCanvasWidth() {
+    public int getWidth() {
         return Toolbox.PANEL_SPACING_H * 2 + Field.SIZE;
     }
 }

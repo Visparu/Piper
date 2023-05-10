@@ -1,6 +1,6 @@
-package de.visparu.piper.structures.pipes;
+package de.visparu.piper.game.structures.pipes;
 
-import de.visparu.piper.structures.fields.Field;
+import de.visparu.piper.game.structures.fields.Field;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
